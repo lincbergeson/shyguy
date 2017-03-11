@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>html5 canvas rendering benchmarks</title>
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+}
+</style>
+</head>
+<body>
+<canvas id="maincanvas">Your browser does not support HTML5 canvas.</canvas>
+<script>
+
+var canvas = document.getElementById("maincanvas");
+var ctx = canvas.getContext("2d");
+
+// initialization code goes here
+var x = 140;
+var shyguy = new Image();
+shyguy.src = 'shy_guy.png';
+shyguy.onload = runBenchMark;
+
+function render() {
+  // code to benchmark goes here
+  ctx.drawImage(shyguy,x,100);
+  x++;
+}
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function runBenchMark() {
+  var start = Date.now();
+
+  for (var i = 0; i < 1000; i++) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    render();
+  }
+
+  var finish = Date.now();
+  console.log("Ran render() 1000x in: " + (finish - start) + " milliseconds.");
+}
+
+</script>
+</body>
+</html>
