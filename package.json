@@ -1,0 +1,23 @@
+{
+  "name": "shyguy",
+  "version": "1.0.0",
+  "description": "A simple browser game with HTML5 and JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lincbergeson/shyguy.git"
+  },
+  "author": "Lincoln",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lincbergeson/shyguy/issues"
+  },
+  "homepage": "https://github.com/lincbergeson/shyguy#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
+}
