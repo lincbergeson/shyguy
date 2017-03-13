@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body {
+	margin: 0;
+  width: 100%;
+	height: 100%;
+}
+#mainCanvas {
+  width:100%;
+  height:100%;
+  position:absolute;
+}
+</style>
+<body>
+
+<canvas id="mainCanvas">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+
+window.addEventListener('resize', resizeCanvas, false);
+
+var draw_interval, game_interval;
+window.addEventListener('keydown', processKeyboard, false);
+
+var canvas = document.getElementById("mainCanvas");
+var ctx = canvas.getContext("2d");
+
+var x = 200;
+var y = 200;
+
+var stopped = false;
+
+startIntervals();
+resizeCanvas();
+draw();
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  draw();
+}
+
+function toggleIntervals() {
+  if (stopped) startIntervals();
+  else stopIntervals();
+  stopped = !stopped;
+}
+
+function startIntervals() {
+  draw_interval = window.setInterval(draw, 50);
+  game_interval = window.setInterval(game, 10);
+}
+
+function stopIntervals() {
+  window.clearInterval(draw_interval);
+  window.clearInterval(game_interval);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(x, y, 40, 0, 2 * Math.PI);
+  ctx.stroke();
+}
+
+function game() {
+  
+}
+
+function moveRight() {
+  x += 10;
+}
+
+function moveLeft() {
+  x -= 10;
+}
+
+function moveUp() {
+  y -= 10;
+}
+
+function moveDown() {
+  y += 10;
+}
+
+function processKeyboard(event) {
+  switch(event.code) {
+    case "Escape":
+      toggleIntervals();
+      break;
+    case "ArrowUp":
+      moveUp();
+      break;
+    case "ArrowDown":
+      moveDown();
+      break;
+    case "ArrowRight":
+      moveRight();
+      break;
+    case "ArrowLeft":
+      moveLeft();
+      break;
+  }
+}
+
+</script>
+
+</body>
+</html>
