@@ -24,7 +24,9 @@ Your browser does not support the HTML5 canvas tag.
 // initialize main shyguy container
 var shyguy = {
   intervals: {},
-  input: {},
+  input: {
+		keymap: {}
+	},
   draw: {},
   game: {},
 };
@@ -58,32 +60,19 @@ shyguy.player.moveDown = function () {
   shyguy.player.y += 10;
 }
 
-// setup keyboard input framework
-shyguy.input.processKeyDown = function (event) {
-  switch(event.code) {
-    case "Escape":
-      shyguy.intervals.toggle();
-      break;
-    case "ArrowUp":
-    case "ArrowDown":
-    case "ArrowRight":
-    case "ArrowLeft":
-      shyguy.input.keydown = event.code;
-      break;
-  }
+// set up keyboard input framework
+shyguy.input.onkeydown = function(e) {
+	shyguy.input.keymap[e.code] = true;
+	if (e.code == "Escape") {
+		shyguy.intervals.toggle();
+	}
 }
-window.addEventListener('keydown', shyguy.input.processKeyDown, false);
-shyguy.input.processKeyUp = function (event) {
-  switch (event.code) {
-    case "ArrowUp":
-    case "ArrowDown":
-    case "ArrowRight":
-    case "ArrowLeft":
-      shyguy.input.keydown = "";
-      break;
-  }
+shyguy.input.onkeyup = function(e) {
+	shyguy.input.keymap[e.code] = false;
 }
-window.addEventListener('keyup', shyguy.input.processKeyUp, false);
+
+window.addEventListener('keydown', shyguy.input.onkeydown, false);
+window.addEventListener('keyup', shyguy.input.onkeyup, false);
 
 // the first of the two main asynchronous loops: render the game screen
 shyguy.draw.main = function() {
@@ -98,12 +87,18 @@ shyguy.game.main = function() {
   shyguy.game.pollInput();
 }
 shyguy.game.pollInput = function() {
-  switch (shyguy.input.keydown) {
-    case "ArrowUp": shyguy.player.moveUp(); break;
-    case "ArrowDown": shyguy.player.moveDown(); break;
-    case "ArrowLeft": shyguy.player.moveLeft(); break;
-    case "ArrowRight": shyguy.player.moveRight(); break;
-  }
+	if (shyguy.input.keymap["ArrowUp"]) {
+		shyguy.player.moveUp();
+	}
+	if (shyguy.input.keymap["ArrowDown"]) {
+		shyguy.player.moveDown();
+	}
+	if (shyguy.input.keymap["ArrowLeft"]) {
+		shyguy.player.moveLeft();
+	}
+	if (shyguy.input.keymap["ArrowRight"]) {
+		shyguy.player.moveRight();
+	}
 }
 
 // start the two main loops
