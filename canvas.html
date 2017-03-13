@@ -21,91 +21,110 @@ Your browser does not support the HTML5 canvas tag.
 
 <script>
 
-window.addEventListener('resize', resizeCanvas, false);
+// initialize main shyguy container
+var shyguy = {
+  intervals: {},
+  input: {},
+  draw: {},
+  game: {},
+};
 
-var draw_interval, game_interval;
-window.addEventListener('keydown', processKeyboard, false);
+// set up the main canvas FIRST
+shyguy.canvas = document.getElementById("mainCanvas");
+shyguy.ctx = shyguy.canvas.getContext("2d");
 
-var canvas = document.getElementById("mainCanvas");
-var ctx = canvas.getContext("2d");
+shyguy.canvas.resize = function() {
+  shyguy.canvas.width = window.innerWidth;
+  shyguy.canvas.height = window.innerHeight;
+  shyguy.draw.main();
+}
+window.addEventListener('resize', shyguy.canvas.resize, false);
 
-var x = 200;
-var y = 200;
-
-var stopped = false;
-
-startIntervals();
-resizeCanvas();
-draw();
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  draw();
+// player object holds everything related to our protagonist
+shyguy.player = {
+  x: 200,
+  y: 200
+}
+shyguy.player.moveRight = function () {
+  shyguy.player.x += 10;
+}
+shyguy.player.moveLeft = function () {
+  shyguy.player.x -= 10;
+}
+shyguy.player.moveUp = function () {
+  shyguy.player.y -= 10;
+}
+shyguy.player.moveDown = function () {
+  shyguy.player.y += 10;
 }
 
-function toggleIntervals() {
-  if (stopped) startIntervals();
-  else stopIntervals();
-  stopped = !stopped;
-}
-
-function startIntervals() {
-  draw_interval = window.setInterval(draw, 50);
-  game_interval = window.setInterval(game, 10);
-}
-
-function stopIntervals() {
-  window.clearInterval(draw_interval);
-  window.clearInterval(game_interval);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.beginPath();
-  ctx.arc(x, y, 40, 0, 2 * Math.PI);
-  ctx.stroke();
-}
-
-function game() {
-  
-}
-
-function moveRight() {
-  x += 10;
-}
-
-function moveLeft() {
-  x -= 10;
-}
-
-function moveUp() {
-  y -= 10;
-}
-
-function moveDown() {
-  y += 10;
-}
-
-function processKeyboard(event) {
+// setup keyboard input framework
+shyguy.input.processKeyDown = function (event) {
   switch(event.code) {
     case "Escape":
-      toggleIntervals();
+      shyguy.intervals.toggle();
       break;
     case "ArrowUp":
-      moveUp();
-      break;
     case "ArrowDown":
-      moveDown();
-      break;
     case "ArrowRight":
-      moveRight();
-      break;
     case "ArrowLeft":
-      moveLeft();
+      shyguy.input.keydown = event.code;
       break;
   }
 }
+window.addEventListener('keydown', shyguy.input.processKeyDown, false);
+shyguy.input.processKeyUp = function (event) {
+  switch (event.code) {
+    case "ArrowUp":
+    case "ArrowDown":
+    case "ArrowRight":
+    case "ArrowLeft":
+      shyguy.input.keydown = "";
+      break;
+  }
+}
+window.addEventListener('keyup', shyguy.input.processKeyUp, false);
+
+// the first of the two main asynchronous loops: render the game screen
+shyguy.draw.main = function() {
+  shyguy.ctx.clearRect(0, 0, shyguy.canvas.width, shyguy.canvas.height);
+  shyguy.ctx.beginPath();
+  shyguy.ctx.arc(shyguy.player.x, shyguy.player.y, 40, 0, 2 * Math.PI);
+  shyguy.ctx.stroke();
+}
+
+// the second of the two main asynchronous loops: execute game logic
+shyguy.game.main = function() {
+  shyguy.game.pollInput();
+}
+shyguy.game.pollInput = function() {
+  switch (shyguy.input.keydown) {
+    case "ArrowUp": shyguy.player.moveUp(); break;
+    case "ArrowDown": shyguy.player.moveDown(); break;
+    case "ArrowLeft": shyguy.player.moveLeft(); break;
+    case "ArrowRight": shyguy.player.moveRight(); break;
+  }
+}
+
+// start the two main loops
+shyguy.intervals.stopped = false;
+shyguy.intervals.toggle = function () {
+  if (shyguy.intervals.stopped) shyguy.intervals.start();
+  else shyguy.intervals.stop();
+  shyguy.intervals.stopped = !shyguy.intervals.stopped;
+}
+shyguy.intervals.start = function() {
+  shyguy.intervals.draw = window.setInterval(shyguy.game.main, 50);
+  shyguy.intervals.game = window.setInterval(shyguy.draw.main, 50);
+}
+shyguy.intervals.stop = function() {
+  window.clearInterval(shyguy.intervals.game);
+  window.clearInterval(shyguy.intervals.draw);
+}
+
+shyguy.canvas.resize();
+shyguy.intervals.start();
+
 
 </script>
 
